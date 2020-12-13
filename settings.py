@@ -1,5 +1,6 @@
 TITLE = 'Tic Tac Toe'
 CELL_SIZE = 100
+BOARD_SIZE = 5  # dimensions (for example TICTACTOE is 3x3, Gomoku is 15x15)
 RESET_BUTTON_HEIGHT = 60
 
 BACKGROUND_COLOR = (255, 255, 255)
