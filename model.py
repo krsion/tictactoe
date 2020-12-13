@@ -11,4 +11,4 @@ class State:
 
 class Bot:
     def move(self, state):
-        return (None, None)
+        return (0, 0)

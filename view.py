@@ -1,9 +1,11 @@
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN, QUIT
-from settings import CELL_SIZE, RESET_BUTTON_HEIGHT, TITLE, BACKGROUND_COLOR
+from settings import CELL_SIZE, RESET_BUTTON_HEIGHT, TITLE, \
+    BACKGROUND_COLOR, MAIN_GUI_COLOR, O_COLOR, X_COLOR, WINNER_LINE_COLOR
 
 
 class View:
+
     def __init__(self):
         pygame.init()
         pygame.display.set_caption(TITLE)
@@ -13,8 +15,7 @@ class View:
 
         self.screen = pygame.display.set_mode(screen_sizes)
         self.board = pygame.Surface(board_sizes)
-        self.screen.fill(BACKGROUND_COLOR)
-        pygame.display.flip()
+        self.reset()
 
     def get_events(self):
         events = []
@@ -30,13 +31,42 @@ class View:
         return events
 
     def reset(self):
-        pass
+        self.screen.fill(BACKGROUND_COLOR)
+        self.board.fill(BACKGROUND_COLOR)
+        for i in range(1, 3):
+            start_pos = (i*CELL_SIZE, 0)
+            end_pos = (i*CELL_SIZE, 3*CELL_SIZE)
+            pygame.draw.line(self.board, MAIN_GUI_COLOR, start_pos, end_pos)
+
+        for i in range(1, 3):
+            start_pos = (0, i*CELL_SIZE)
+            end_pos = (3*CELL_SIZE, i*CELL_SIZE)
+            pygame.draw.line(self.board, MAIN_GUI_COLOR, start_pos, end_pos)
+        self.screen.blit(self.board, (0, 0))
+        pygame.display.flip()
 
     def x_move(self, x, y):
-        pass
+        startpos1 = (x*CELL_SIZE, y*CELL_SIZE)
+        endpos1 = ((x+1)*CELL_SIZE, (y+1)*CELL_SIZE)
+        startpos2 = ((x+1)*CELL_SIZE, y*CELL_SIZE)
+        endpos2 = (x*CELL_SIZE, (y+1)*CELL_SIZE)
+
+        pygame.draw.line(self.board, O_COLOR, startpos1, endpos1)
+        pygame.draw.line(self.board, O_COLOR, startpos2, endpos2)
+        self.screen.blit(self.board, (0, 0))
+        pygame.display.flip()
 
     def o_move(self, x, y):
-        pass
+        rect = pygame.Rect(
+            x*CELL_SIZE, y*CELL_SIZE, CELL_SIZE, CELL_SIZE)
+        pygame.draw.ellipse(self.board, X_COLOR, rect, 1)
+        self.screen.blit(self.board, (0, 0))
+        pygame.display.flip()
 
     def highlight_line(start, end):
-        pass
+        a, b = start, end
+        startpos = ((a[0]+0.5)*CELL_SIZE, (a[1]+0.5)*CELL_SIZE)
+        endpos = ((b[0]+0.5)*CELL_SIZE, (b[1]+0.5)*CELL_SIZE)
+        pygame.draw.line(self.board, WINNER_LINE_COLOR, startpos, endpos, 4)
+        self.screen.blit(self.board, (0, 0))
+        pygame.display.flip()
