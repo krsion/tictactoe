@@ -18,6 +18,7 @@ class View:
         self.reset()
 
     def get_events(self):
+        """ this encapsulates the communication with pygame """
         events = []
         for x in pygame.event.get():
             if x.type == QUIT:
@@ -31,6 +32,7 @@ class View:
         return events
 
     def reset(self):
+        """ Clears the board """
         self.screen.fill(BACKGROUND_COLOR)
         self.board.fill(BACKGROUND_COLOR)
         for i in range(1, BOARD_SIZE):
@@ -51,6 +53,7 @@ class View:
         pygame.display.flip()
 
     def x_move(self, x, y):
+        """ Draws an X on given position """
         startpos1 = (x*CELL_SIZE, y*CELL_SIZE)
         endpos1 = ((x+1)*CELL_SIZE, (y+1)*CELL_SIZE)
         startpos2 = ((x+1)*CELL_SIZE, y*CELL_SIZE)
@@ -62,6 +65,7 @@ class View:
         pygame.display.flip()
 
     def o_move(self, x, y):
+        """ Draws an O on given position """
         rect = pygame.Rect(
             x*CELL_SIZE, y*CELL_SIZE, CELL_SIZE, CELL_SIZE)
         pygame.draw.ellipse(self.board, X_COLOR, rect, 1)
@@ -69,6 +73,11 @@ class View:
         pygame.display.flip()
 
     def highlight_line(self, start, end):
+        """
+        Draws a thick line from cell start to cell end
+        params: start: tuple of two integers
+                end: tuple of two integers
+        """
         a, b = start, end
         startpos = ((a[0]+0.5)*CELL_SIZE, (a[1]+0.5)*CELL_SIZE)
         endpos = ((b[0]+0.5)*CELL_SIZE, (b[1]+0.5)*CELL_SIZE)

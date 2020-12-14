@@ -3,6 +3,7 @@ from settings import BOT, PLAYER, EMPTY, BOARD_SIZE, N_WINS
 
 class State:
     def __init__(self, board=None, last_move=None):
+        """ board = 2D list, last_move = tuple of coordinates (x,y) """
         self.board = board
         self.last_move = last_move
         if not board:
@@ -29,12 +30,15 @@ class State:
         self.last_move = None
 
     def fits(self, x, y):
+        """ Returns False if the coordinates aren't within the valid range """
         return 0 <= x < BOARD_SIZE and 0 <= y < BOARD_SIZE
 
     def move_is_valid(self, x, y):
+        """ Checks if the place is empty, not if it fits """
         return self.board[y][x] == EMPTY
 
     def board_is_full(self):
+        """ Checks if there are some empty cells """
         for y in range(BOARD_SIZE):
             for x in range(BOARD_SIZE):
                 if self.board[y][x] == EMPTY:
@@ -57,6 +61,10 @@ class State:
                     lines[j] = []
 
     def children(self):
+        """
+        Generates all possible states after this state.
+        If exists, the state with last_move in the middle is put to be first.
+        """
         last_player = self.board[self.last_move[1]
                                  ][self.last_move[0]] if self.last_move else None
         player = BOT if last_player == PLAYER else PLAYER

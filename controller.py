@@ -3,6 +3,7 @@ from settings import PLAYER, BOT
 
 
 def controller(state, bot, view):
+    """ Here is the main logic of the game """
     is_running = True
     is_game = True
     player_begins = True
