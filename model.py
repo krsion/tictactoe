@@ -94,7 +94,6 @@ class Bot:
             if best_score < score:
                 best_score = score
                 best_state = child
-            print(Bot.evaluate(child))
         return best_state.last_move
 
     def minimax(state, depth, maxing):
