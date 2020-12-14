@@ -2,15 +2,31 @@ from settings import BOT, PLAYER, EMPTY, BOARD_SIZE, N_WINS
 
 
 class State:
-    def __init__(self):
-        self.reset()
+    def __init__(self, board=None, last_move=None):
+        self.board = board
+        self.last_move = last_move
+        if not board:
+            self.board = [[EMPTY for _ in range(BOARD_SIZE)]
+                          for _ in range(BOARD_SIZE)]
+
+    def __str__(self):
+        s = str(self.last_move) + \
+            str(self.board[self.last_move[1]][self.last_move[0]]) + '\n'
+        for line in self.board:
+            for cell in line:
+                s += str(cell)
+            s += '\n'
+        s += '\n'
+        return s
 
     def update(self, x, y, who):
         self.board[y][x] = who
+        self.last_move = (x, y)
 
     def reset(self):
         self.board = [[EMPTY for _ in range(BOARD_SIZE)]
                       for _ in range(BOARD_SIZE)]
+        self.last_move = None
 
     def fits(self, x, y):
         return 0 <= x < BOARD_SIZE and 0 <= y < BOARD_SIZE
@@ -40,7 +56,66 @@ class State:
                 else:
                     lines[j] = []
 
+    def children(self):
+        last_player = self.board[self.last_move[1]
+                                 ][self.last_move[0]] if self.last_move else None
+        player = BOT if last_player == PLAYER else PLAYER
+        children = []
+        for x in range(BOARD_SIZE):
+            for y in range(BOARD_SIZE):
+                if self.board[y][x] == EMPTY:
+                    child = State([x[:] for x in self.board], (x, y))
+                    child.board[y][x] = player
+                    if x == y == 1:
+                        children = [child]+children
+                    else:
+                        children.append(child)
+        return children
+
 
 class Bot:
     def move(self, state):
-        return (0, 0)
+        # return (0, 0)
+        best_state = state
+        best_score = -100000
+        i = 0
+        for child in state.children():
+            i += 1
+            score = Bot.minimax(child, 4, False)
+
+            if best_score < score:
+                best_score = score
+                best_state = child
+            print(Bot.evaluate(child))
+        return best_state.last_move
+
+    def minimax(state, depth, maxing):
+        if depth <= 0 or state.board_is_full() or Bot.evaluate(state) > 0:
+            return Bot.evaluate(state)
+        children = state.children()
+        if maxing:
+            val = -1
+            for x in children:
+                val = max(val, Bot.minimax(x, depth-1, False))
+            return val
+        else:
+            val = 1
+            for x in children:
+                val = min(val, Bot.minimax(x, depth-1, True))
+            return val
+
+    def evaluate(state):
+        def check_for(who):
+            B = state.board
+            for i in range(3):
+                if B[i] == [who, who, who] or B[0][i] == B[1][i] == B[2][i] == who:
+                    return True
+            if B[0][0] == B[1][1] == B[2][2] == who:
+                return True
+            return False
+
+        if check_for(PLAYER):
+            return -1
+        if check_for(BOT):
+            return 1
+        return 0

@@ -1,5 +1,5 @@
 from model import State, Bot
 from view import View
-from controller import Controller
+from controller import controller
 
-Controller(State(), Bot(), View())
+controller(State(), Bot(), View())

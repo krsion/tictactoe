@@ -45,7 +45,7 @@ class View:
         self.screen.blit(self.board, (0, 0))
 
         font = pygame.font.SysFont('Arial', RESET_BUTTON_HEIGHT - 12)
-        text = font.render('RESET', True, MAIN_GUI_COLOR)
+        text = font.render('NEW GAME', True, MAIN_GUI_COLOR)
         self.screen.blit(text, (6, BOARD_SIZE*CELL_SIZE+6))
 
         pygame.display.flip()
