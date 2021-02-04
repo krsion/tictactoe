@@ -1,5 +1,22 @@
 import random
-from settings import PLAYER, BOT
+from settings import PLAYER, BOT, X_WHO, O_WHO
+
+
+def update(x, y, who, state, view):
+    """ Updates both state and view """
+    state.update(x, y, who)
+    view_update = {X_WHO: view.x_move, O_WHO: view.o_move}
+    view_update[who](x, y)
+
+
+def is_end(x, y, state, view):
+    """ Tells if it is end of a game. If there is a winner, it marks him. """
+    winner_line = state.winner_line((x, y))
+    if winner_line or state.board_is_full():
+        if winner_line:
+            view.highlight_line(*winner_line)
+        return True
+    return False
 
 
 def controller(state, bot, view):
@@ -12,35 +29,25 @@ def controller(state, bot, view):
             if event == 'QUIT':
                 is_running = False
             elif event == 'RESET':
+                player_begins = not player_begins
                 is_game = True
                 view.reset()
                 state.reset()
-                if player_begins:
+                if not player_begins:
                     x, y = bot.move(state)
-                    state.update(x, y, BOT)
-                    view.o_move(x, y)
-                player_begins = not player_begins
+                    update(x, y, BOT, state, view)
+
             elif is_game:
                 x, y = event
                 if not state.move_is_valid(x, y):
-                    break  # out of the for cycle through events
-                view.x_move(x, y)
-                state.update(x, y, PLAYER)
-                winner_line = state.winner_line((x, y))
-                if winner_line or state.board_is_full():
+                    break
+                update(x, y, PLAYER, state, view)
+                if is_end(x, y, state, view):
                     is_game = False
-                    if winner_line:
-                        view.highlight_line(*winner_line)
                     continue
 
                 x, y = bot.move(state)
-                # if not state.move_is_valid(x, y):     probably not necessary
-                #    continue
-                view.o_move(x, y)
-                state.update(x, y, BOT)
-                winner_line = state.winner_line((x, y))
-                if winner_line or state.board_is_full():
+                update(x, y, BOT, state, view)
+                if is_end(x, y, state, view):
                     is_game = False
-                    if winner_line:
-                        view.highlight_line(*winner_line)
                     continue
