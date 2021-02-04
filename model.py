@@ -89,26 +89,32 @@ class Bot:
         i = 0
         for child in state.children():
             i += 1
-            score = Bot.minimax(child, 4, False)
+            score = Bot.minimax(child, 4, False, -1000, 1000)
 
             if best_score < score:
                 best_score = score
                 best_state = child
         return best_state.last_move
 
-    def minimax(state, depth, maxing):
+    def minimax(state, depth, maxing, alpha, beta):
         if depth <= 0 or state.board_is_full() or Bot.evaluate(state) > 0:
             return Bot.evaluate(state)
         children = state.children()
         if maxing:
             val = -1
             for x in children:
-                val = max(val, Bot.minimax(x, depth-1, False))
+                val = max(val, Bot.minimax(x, depth-1, False, alpha, beta))
+                alpha = max(alpha, val)
+                if alpha > beta:
+                    break
             return val
         else:
             val = 1
             for x in children:
-                val = min(val, Bot.minimax(x, depth-1, True))
+                val = min(val, Bot.minimax(x, depth-1, True, alpha, beta))
+                beta = min(beta, val)
+                if beta < alpha:
+                    break
             return val
 
     def evaluate(state):
